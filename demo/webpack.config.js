@@ -1,17 +1,41 @@
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
-	entry: __dirname + "app/main.js",//入口文件
-	output: {//产出目录
-		path: __dirname + "/build"
-		filename: '[name].js'
+	entry: './main.js',
+	output: {
+		path: path.resolve(__dirname, './dist'),//相对路径转成绝对路径
+		filename: '[name].bundle.js',
+		publicPath: '/dist/'//浏览器引用静态资源的路径，热更新指定编译的包访问位置
 	},
-	devtool: 'none',//开发工具，开发环境生产环境等选择
-	devServer: {//开发中Server，能够用多种方式改变其行为
-		contentBase: path.join(__dirname, 'public'),//路径来自dist/目录下的文件
-		compress: true,//压缩
-		port: 9000,//端口号
-		clientLogLevel: "none",//在控制台显示信息，none,error,warning,info(默认值)
-
+	module: {
+		rules: [
+			{
+				test: /\.vue$/,
+				loader: 'vue-loader',
+			},
+			{
+				test: /\.js$/,
+				loader: 'babel-loader',
+				exclude: /node_modules/
+			},
+			{
+				test: /\.css$/,
+				loader: 'less-loader'
+			},
+			{
+				test: /\.(png|jpg|gif|svg|jpeg)$/,
+				loader: 'file-loader',
+				options: {
+					name: '[name].[ext]?[hash]'
+				}
+			}
+		]
+	},
+	resolve: {
+		extensions: ['.js', '.vue'],
+		alias: {
+			'vue': 'vue/dist/vue.js'
+		}
 	}
 }
